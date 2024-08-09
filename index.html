@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pflanzen Informationen</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        let plantData = {};
+
+        async function loadPlantData() {
+            try {
+                let res = await fetch("/Pflanzen.json"); // Passe den Pfad zu deiner JSON-Datei an
+                plantData = await res.json();
+                console.log('Plant data loaded:', plantData);
+            } catch (error) {
+                console.error('Error loading plant data:', error);
+            }
+        }
+
+       function searchPlant(plantId) {
+    const plantNameInput = document.getElementById(`plantNameInput${plantId}`).value.trim().toLowerCase();
+    const plantInfo = Object.values(plantData).find(plant => plant.name.toLowerCase() === plantNameInput);
+
+    if (plantInfo) {
+        document.getElementById(`plant-name${plantId}`).innerText = `Name: ${plantInfo.name}`;
+        document.getElementById(`plant-light${plantId}`).innerText = `Licht: ${plantInfo.licht}`;
+        document.getElementById(`plant-water${plantId}`).innerText = `Wasser: ${plantInfo.wasser}`;
+        document.getElementById(`plant-size${plantId}`).innerText = `Größe: ${plantInfo.groesse}`;
+        document.getElementById(`plant-bloom${plantId}`).innerText = `Blütezeit: ${plantInfo.bluetezeit}`;
+
+        localStorage.setItem(`plantInfo${plantId}`, JSON.stringify(plantInfo));
+    } else {
+        document.getElementById(`plant-name${plantId}`).innerText = 'Name: Nicht gefunden';
+        document.getElementById(`plant-light${plantId}`).innerText = 'Licht: -';
+        document.getElementById(`plant-water${plantId}`).innerText = 'Wasser: -';
+        document.getElementById(`plant-size${plantId}`).innerText = 'Größe: -';
+        document.getElementById(`plant-bloom${plantId}`).innerText = 'Blütezeit: -';
+    }
+}
+
+function clearSearch(plantId) {
+    document.getElementById(`plantNameInput${plantId}`).value = '';
+    document.getElementById(`plant-name${plantId}`).innerText = 'Name: -';
+    document.getElementById(`plant-light${plantId}`).innerText = 'Licht: -';
+    document.getElementById(`plant-water${plantId}`).innerText = 'Wasser: -';
+    document.getElementById(`plant-size${plantId}`).innerText = 'Größe: -';
+    document.getElementById(`plant-bloom${plantId}`).innerText = 'Blütezeit: -';
+
+    localStorage.removeItem(`plantInfo${plantId}`);
+}
+
+function loadSavedData() {
+    for (let i = 1; i <= 2; i++) {
+        const savedData = localStorage.getItem(`plantInfo${i}`);
+        if (savedData) {
+            const plantInfo = JSON.parse(savedData);
+            document.getElementById(`plant-name${i}`).innerText = `Name: ${plantInfo.name}`;
+            document.getElementById(`plant-light${i}`).innerText = `Licht: ${plantInfo.licht}`;
+            document.getElementById(`plant-water${i}`).innerText = `Wasser: ${plantInfo.wasser}`;
+            document.getElementById(`plant-size${i}`).innerText = `Größe: ${plantInfo.groesse}`;
+            document.getElementById(`plant-bloom${i}`).innerText = `Blütezeit: ${plantInfo.bluetezeit}`;
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', (event) => {
+    document.getElementById('searchButton1').addEventListener('click', () => searchPlant(1));
+    document.getElementById('searchButton2').addEventListener('click', () => searchPlant(2));
+
+    document.querySelectorAll('.clear-button').forEach((button) => {
+        button.addEventListener('click', (event) => {
+            const plantId = event.target.getAttribute('data-plant-id');
+            clearSearch(plantId);
+        });
+    });
+
+    loadPlantData();
+    loadCharts();
+    loadLastWatered();
+    loadSavedData();
+});
+
+        function updateLastWatered(plantId) {
+            const tag = document.getElementById(`tag${plantId}`).value;
+            const uhrzeit = document.getElementById(`uhrzeit${plantId}`).value;
+            if (tag && uhrzeit) {
+                const lastWatered = `${tag} ${uhrzeit}`;
+                document.getElementById(`lastWatered${plantId}`).innerText = lastWatered;
+                localStorage.setItem(`lastWatered${plantId}`, lastWatered);
+            }
+        }
+
+        function loadLastWatered() {
+            const lastWatered1 = localStorage.getItem('lastWatered1');
+            const lastWatered2 = localStorage.getItem('lastWatered2');
+            if (lastWatered1) {
+                document.getElementById('lastWatered1').innerText = lastWatered1;
+            }
+            if (lastWatered2) {
+                document.getElementById('lastWatered2').innerText = lastWatered2;
+            }
+        }
+
+        var weekdays = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag", "Samstag", "Sonntag"];
+        var dry = 2700;
+        var wet = 1300;
+        var diff = dry - wet;
+        var arr1_1 = [];
+        var arr1_2 = [];
+        var arr2_1 = [];
+        var arr2_2 = [];
+        var chart1;
+        var chart2;
+
+        async function loadCharts() {
+            try {
+                let res = await fetch("/data.json");
+                let data = await res.json();
+
+                let datapf1 = data.filter(item => item.pflanze === "1");
+                let datapf2 = data.filter(item => item.pflanze === "2");
+
+                arr1_1 = datapf1.map(item => {
+                    let date = new Date(item.timestamp);
+                    return weekdays[date.getDay() - 1] + " " + date.getHours() + ":00";
+                });
+                arr1_2 = datapf1.map(item => ((dry - item.feuchtigkeit) / diff) * 100);
+                arr2_1 = datapf2.map(item => {
+                    let date = new Date(item.timestamp);
+                    return weekdays[date.getDay() - 1] + " " + date.getHours() + ":00";
+                });
+                arr2_2 = datapf2.map(item => ((dry - item.feuchtigkeit) / diff) * 100);
+
+                let lastFeuchtigkeitPflanze1 = arr1_2[arr1_2.length - 1] || 0;
+                let lastFeuchtigkeitPflanze2 = arr2_2[arr2_2.length - 1] || 0;
+
+                document.querySelector('#pflanze1-feuchtigkeit').innerText = `${lastFeuchtigkeitPflanze1.toFixed(2)}%`;
+                document.querySelector('#pflanze2-feuchtigkeit').innerText = `${lastFeuchtigkeitPflanze2.toFixed(2)}%`;
+
+                if (chart1) {
+                    chart1.data.labels = arr1_1;
+                    chart1.data.datasets[0].data = arr1_2;
+                    chart1.update();
+                } else {
+                    const ctx = document.getElementById("myChart").getContext('2d');
+                    chart1 = new Chart(ctx, {
+                        type: "line",
+                        data: {
+                            labels: arr1_1,
+                            datasets: [{
+                                label: "Feuchtigkeit in %",
+                                data: arr1_2,
+                                borderWidth: 1,
+                                borderColor: '#FF5733' // Beispiel Farbe für Pflanze 1
+                            }],
+                        },
+                        options: {
+                            responsive: false,
+                            scales: {
+                                y: { beginAtZero: true },
+                            },
+                        },
+                    });
+                }
+
+                if (chart2) {
+                    chart2.data.labels = arr2_1;
+                    chart2.data.datasets[0].data = arr2_2;
+                    chart2.update();
+                } else {
+                    const ctx2 = document.getElementById("my2ndChart").getContext('2d');
+                    chart2 = new Chart(ctx2, {
+                        type: "line",
+                        data: {
+                            labels: arr2_1,
+                            datasets: [{
+                                label: "Feuchtigkeit in %",
+                                data: arr2_2,
+                                borderWidth: 1,
+                                borderColor: '#33C1FF' // Beispiel Farbe für Pflanze 2
+                            }],
+                        },
+                        options: {
+                            responsive: false,
+                            scales: {
+                                y: { beginAtZero: true },
+                            },
+                        },
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading data:', error);
+            }
+        }
+    </script>
+</head>
+<body>
+    <div id="container">
+        <div id="linkscont">
+            <!-- Informationen oben -->
+            <div id="infoContainer">
+                <div class="info-box">
+                    <h2>Gegoßen</h2>
+                    <p id="lastWatered1"></p>
+                </div>
+                <div class="info-box">
+                    <h2>Feuchtigkeit</h2>
+                    <p id="pflanze1-feuchtigkeit">Feuchtigkeit: -</p>
+                </div>
+            </div>
+            <!-- Diagramm in der Mitte -->
+            <div class="chartcont">
+                <h2>Pflanze 1</h2>
+                <canvas id="myChart"></canvas>
+            </div>
+            <!-- Formular unten -->
+            <div id="form-container">
+                <h2>Manuelle Bewässerung</h2>
+                <div class="form-group">
+                    <label for="tag1">Tag:</label>
+                    <input type="date" id="tag1" name="tag1">
+                </div>
+                <div class="form-group">
+                    <label for="uhrzeit1">Uhrzeit:</label>
+                    <input type="time" id="uhrzeit1" name="uhrzeit1">
+                </div>
+                <button id="updateButton1">Aktualisieren</button>
+            </div>
+        </div>
+
+        <<div id="mittelcont">
+            <div class="search-container">
+                <div class="search-box">
+                    <h2>Pflanze 1 Informationen</h2>
+                    <input type="text" id="plantNameInput1" placeholder="Name der Pflanze eingeben" />
+                    <button id="searchButton1">Suchen</button>
+                    <button class="clear-button" data-plant-id="1">X</button>
+                    <div class="search-info">
+                        <p id="plant-name1">Name: -</p>
+                        <p id="plant-light1">Licht: -</p>
+                        <p id="plant-water1">Wasser: -</p>
+                        <p id="plant-size1">Größe: -</p>
+                        <p id="plant-bloom1">Blütezeit: -</p>
+                    </div>
+                </div>
+                <div class="search-box">
+                    <h2>Pflanze 2 Informationen</h2>
+                    <input type="text" id="plantNameInput2" placeholder="Name der Pflanze eingeben" />
+                    <button id="searchButton2">Suchen</button>
+                    <button class="clear-button" data-plant-id="2">X</button>
+                    <div class="search-info">
+                        <p id="plant-name2">Name: -</p>
+                        <p id="plant-light2">Licht: -</p>
+                        <p id="plant-water2">Wasser: -</p>
+                        <p id="plant-size2">Größe: -</p>
+                        <p id="plant-bloom2">Blütezeit: -</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="rechtscont">
+            <!-- Informationen oben -->
+            <div id="infoContainer">
+                <div class="info-box">
+                    <h2>Gegoßen</h2>
+                    <p id="lastWatered2"></p>
+                </div>
+                <div class="info-box">
+                    <h2>Feuchtigkeit</h2>
+                    <p id="pflanze2-feuchtigkeit">Feuchtigkeit: -</p>
+                </div>
+            </div>
+            <!-- Diagramm in der Mitte -->
+            <div class="chartcont">
+                <h2>Pflanze 2</h2>
+                <canvas id="my2ndChart"></canvas>
+            </div>
+            <!-- Formular unten -->
+            <div id="form-container">
+                <h2>Manuelle Bewässerung</h2>
+                <div class="form-group">
+                    <label for="tag2">Tag:</label>
+                    <input type="date" id="tag2" name="tag2">
+                </div>
+                <div class="form-group">
+                    <label for="uhrzeit2">Uhrzeit:</label>
+                    <input type="time" id="uhrzeit2" name="uhrzeit2">
+                </div>
+                <button id="updateButton2">Aktualisieren</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
