@@ -1,0 +1,312 @@
+html {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+body {
+    margin: 0;
+    padding: 0 2%;
+    width: 90%;
+    height: 90%;
+    background-image: url("/imgs/Pflanze.jpg");
+    background-size: contain;
+    
+}
+
+.chartcont {
+    width: 92%;
+    background-color: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 0 10px 10px rgba(34, 34, 34, 0.25);
+    border-radius: 20px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top:20px;
+    
+}
+
+.info {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.98);
+    box-shadow: 0 0 10px 10px rgba(34, 34, 34, 0.25);
+    border-radius: 20px;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+#container {
+    display: flex;
+    width: 100%;
+    height: 100%;
+    align-items: center;
+    justify-content: space-between;
+}
+
+
+
+h2 {
+    margin: 0;
+    padding: 0;
+}
+
+canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+#video {
+    width: 30vw;
+}
+
+#linkscont {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 35%;
+    margin-top: 40px;
+    margin-left: 90px;
+    margin-right: 60px;
+}
+
+#rechtscont {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 35%;
+    margin: 0 40px;
+    margin-left: 60px;
+    margin-top: 40px;
+}
+
+#mittelcont {
+    display: flex;
+    flex-direction: column; /* Stellt sicher, dass die Buttons unter dem Bild erscheinen */
+    align-items: center; /* Zentriert den Inhalt horizontal */
+    justify-content: center; /* Zentriert den Inhalt vertikal */
+    width: 35%; /* Breite erhöhen */
+    margin-left: 30px;
+    margin-right: 30px;
+}
+
+
+
+#infoContainer {
+    display: flex;
+    justify-content: space-between; /* Container nebeneinander anordnen */
+    gap: 20px; /* Abstand zwischen den Containern */
+    margin: 0 20px; /* Abstand zu den Seiten */
+    margin-top: 20px;
+    width: 100%; /* Vollbreite des Containers nutzen */
+}
+
+
+.info-box {
+    flex: 1; /* Gleiche Breite für beide Container */
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.98); /* Hintergrundfarbe, anpassbar */
+    border-radius: 10px; /* Ecken abrunden */
+    border: 1px solid #ddd; /* Rand um den Container */
+    box-sizing: border-box;
+    text-align: center; /* Text zentrieren */
+     font-size: 1.5em; /* Größere Schrift */
+     box-shadow: 0 0 15px rgba(76, 255, 76, 0.8);
+}
+#pflanze1-feuchtigkeit {
+    font-size: 3em; /* Große Schriftgröße für Feuchtigkeitsdaten */
+    margin: 20px 0;
+    }
+#pflanze2-feuchtigkeit {
+    font-size: 3em; /* Große Schriftgröße für Feuchtigkeitsdaten */
+    margin: 20px 0;
+    }
+#lastWatered2 {
+    font-size: 1.5em; /* Große Schriftgröße für Feuchtigkeitsdaten */
+    margin: 20px 0;
+}
+#lastWatered1 {
+    font-size: 1.5em; /* Große Schriftgröße für Feuchtigkeitsdaten */
+    margin: 20px 0;
+}
+
+/* Such-Box-Stil */
+/* Container für die Suchboxen */
+/* Container für die Suchboxen */
+/* Container für die Suchboxen */
+.search-container {
+    display: flex;
+    flex-direction: column; /* Container untereinander anordnen */
+    gap: 20px; /* Abstand zwischen den Suchboxen */
+    width: 100%; /* Maximale Breite des Mittelcontainers nutzen */
+    align-items: center; /* Zentrieren der Boxen */
+    margin-top: 50px;
+    
+}
+
+
+.search-controls {
+    display: flex;
+    width: 100%; /* Volle Breite nutzen */
+    gap: 0; /* Kein Abstand zwischen den Buttons */
+}
+
+/* Such-Button */
+.search-button {
+    flex: 1; /* Nimmt den verfügbaren Platz auf der linken Seite ein */
+    background-color: #4CAF50; /* Grün für die Hintergrundfarbe */
+    color: white; /* Weißer Text */
+    border: none; /* Keine Randlinie */
+    padding: 10px; /* Polsterung */
+    text-align: center; /* Textausrichtung */
+    text-decoration: none; /* Keine Unterstreichung */
+    font-size: 16px; /* Schriftgröße */
+    cursor: pointer; /* Zeiger ändern bei Hover */
+    border-radius: 20px 0 0 20px; /* Abgerundete Ecken links */
+    transition: background-color 0.3s; /* Übergangseffekt */
+}
+
+.search-button:hover {
+    background-color: #45a049; /* Etwas dunkleres Grün beim Hover */
+}
+
+/* X-Button */
+.clear-button {
+    flex: 1; /* Nimmt den verfügbaren Platz auf der rechten Seite ein */
+    font-size: 1.2em; /* Schriftgröße für den X-Button */
+    padding: 12px; /* Polsterung */
+    border-radius: 7px 7px 7px 7px; /* Abgerundete Ecken rechts */
+    width: 50px; /* Feste Breite für den X-Button */
+    height: 100%; /* Höhe anpassen */
+    text-align: center; /* Zentriert den Text */
+    line-height: 1.0em; /* Höhe des Buttons für vertikale Zentrierung */
+    border: 1px solid #ddd; /* Rand um den Button */
+    background-color: #f8f8f8; /* Hintergrundfarbe für den Button */
+    cursor: pointer; /* Zeiger ändert sich bei Hover */
+    background-color: #4CAF50;
+}
+
+.clear-button:hover {
+    background-color: #FF0000; /* Hintergrundfarbe beim Hover */
+}
+
+
+/* Formular-Stile */
+#form-container {
+    width: 100%;
+    max-width: 500px; /* Formular etwas kleiner */
+    margin-top: 20px; /* Abstand nach unten */
+    padding: 10px;
+    background-color: rgba(255, 255, 255, 0.98);
+    border-radius: 20px;
+    box-shadow: 0 0 10px rgba(34, 34, 34, 0.2);
+}
+
+#form-container h2 {
+    margin: 0 0 10px;
+    font-size: 22px;
+    text-align: center;
+}
+
+.form-group {
+    margin-top: 12px; /* Weniger Abstand zwischen den Feldern */
+}
+
+.form-group label {
+    display: block;
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 8px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+button {
+  
+    padding: 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+    margin-top: 5px;
+    
+}
+#updateButton1,#updateButton2 {
+ padding: 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.3s;
+    margin-top: 5px;
+    margin-left: 192px;
+    
+
+}
+
+
+
+
+
+button:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+}
+/* CSS-Klassen für Informationen und Antworten in den Suchboxen */
+.search-info {
+    font-size: 1.4em; /* Schriftgröße für Informationen */
+    font-weight: bold; /* Normaler Schriftschnitt */
+    color: #333; /* Farbe für die Informationen */
+    margin-bottom: 7px; /* Abstand unter den Informationen */
+    
+}
+
+.search-answer {
+    font-size: 2em; /* Größere Schriftgröße für Antworten */
+    font-weight: normal; /* Fett gedruckt */
+    color: #000; /* Farbe für die Antworten */
+    margin-top: 10px; /* Abstand oben */
+}
+
+/* Optional: Anpassungen für Suchboxen */
+.search-box {
+    width: 90%; /* Breite der Suchboxen anpassen */
+    max-width: 500px; /* Maximalbreite für größere Bildschirme */
+    padding: 20px; /* Padding etwas erhöhen */
+    background-color: rgba(255, 255, 255, 0.98);
+    border-radius: 20px;
+    border: 1px solid #ddd;
+    box-sizing: border-box;
+    text-align: center;
+    position: relative; /* Für die Positionierung der Buttons */
+    min-height: 390px; /* Höhe der Suchbox */
+    
+}
+/* Anpassung der Eingabefelder für den Pflanzennamen */
+input[type="text"] {
+    width: 60%; /* Breite des Eingabefelds */
+    max-width: 500px; /* Maximale Breite */
+    padding: 10px; /* Innenabstand für besseren Textabstand */
+    border: 1px solid #ccc; /* Randfarbe */
+    border-radius: 10px; /* Abgerundete Ecken */
+    box-sizing: border-box; /* Box-Sizing für exakte Breitenangabe */
+    font-size: 1em; /* Schriftgröße */
+    box-shadow: 0 0 10px rgba(34, 34, 34, 0.2)
+}
